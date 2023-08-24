@@ -25,6 +25,21 @@ class Key
     /** @var string */
     private $type;
 
+    /** @var string */
+    public $algorithm;
+
+    /** @var array */
+    public $publicKeys;
+
+    /** @var string */
+    public $curve;
+
+    /** @var array */
+    public $secrets;
+
+    /** @var string */
+    public $class;
+
     /**
      * @param string       $id
      * @param string|array $secret
