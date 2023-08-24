@@ -145,7 +145,7 @@ class Key
             return null;
         }
         if (!empty($key)) {
-            return $publicKey;
+            return $key;
         } else {
             return null;
         }
