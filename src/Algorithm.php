@@ -5,42 +5,20 @@ namespace HttpSignatures;
 abstract class Algorithm
 {
     /**
-     * @param string $name
-     *
-     * @return HmacAlgorithm
-     *
      * @throws Exception
      */
-    public static function create($name)
+    public static function create(string $name): AlgorithmInterface
     {
-        switch ($name) {
-        case 'hmac-sha1':
-            return new HmacAlgorithm('sha1');
-            break;
-        case 'hmac-sha256':
-            return new HmacAlgorithm('sha256');
-            break;
-        case 'rsa-sha1':
-            return new RsaAlgorithm('sha1');
-            break;
-        case 'rsa-sha256':
-            return new RsaAlgorithm('sha256');
-            break;
-        case 'dsa-sha1':
-            return new DsaAlgorithm('sha1');
-            break;
-        case 'dsa-sha256':
-            return new DsaAlgorithm('sha256');
-            break;
-        case 'ec-sha1':
-            return new EcAlgorithm('sha1');
-            break;
-        case 'ec-sha256':
-            return new EcAlgorithm('sha256');
-            break;
-        default:
-            throw new AlgorithmException("No algorithm named '$name'");
-            break;
-        }
+        return match ($name) {
+            'hmac-sha1' => new HmacAlgorithm('sha1'),
+            'hmac-sha256' => new HmacAlgorithm('sha256'),
+            'rsa-sha1' => new RsaAlgorithm('sha1'),
+            'rsa-sha256' => new RsaAlgorithm('sha256'),
+            'dsa-sha1' => new DsaAlgorithm('sha1'),
+            'dsa-sha256' => new DsaAlgorithm('sha256'),
+            'ec-sha1' => new EcAlgorithm('sha1'),
+            'ec-sha256' => new EcAlgorithm('sha256'),
+            default => throw new AlgorithmException("No algorithm named '$name'"),
+        };
     }
 }

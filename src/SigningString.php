@@ -4,94 +4,69 @@ namespace HttpSignatures;
 
 use Psr\Http\Message\RequestInterface;
 
-class SigningString
+readonly class SigningString
 {
-    /** @var HeaderList */
-    private $headerList;
-
-    /** @var RequestInterface */
-    private $message;
-
-    /**
-     * @param RequestInterface $message
-     */
-    public function __construct(HeaderList $headerList, $message)
+    public function __construct(private HeaderList $headerList, private RequestInterface $message)
     {
-        $this->headerList = $headerList;
-        $this->message = $message;
     }
 
     /**
-     * @return string
+     * @throws SignedHeaderNotPresentException
      */
-    public function string()
+    public function string(): string
     {
         return implode("\n", $this->lines());
     }
 
     /**
-     * @return array
+     * @throws SignedHeaderNotPresentException
      */
-    private function lines()
+    private function lines(): array
     {
-        if (is_null($this->headerList->names)) {
-            return [];
-        } else {
-            return array_map(
-              [$this, 'line'],
-              $this->headerList->names
-          );
-        }
+        return is_null($this->headerList->names)
+            ? []
+            : array_map(
+                fn (string $headerName) => $this->line($headerName),
+                $this->headerList->names
+            );
     }
 
     /**
-     * @param string $name
-     *
-     * @return string
-     *
      * @throws SignedHeaderNotPresentException
      */
-    private function line($name)
+    private function line(string $headerName): string
     {
-        if ('(request-target)' == $name) {
-            return $this->requestTargetLine();
-        } else {
-            return sprintf('%s: %s', $name, $this->headerValue($name));
-        }
+        return '(request-target)' == $headerName
+            ? $this->requestTargetLine()
+            : sprintf('%s: %s', $headerName, $this->headerValue($headerName));
     }
 
     /**
-     * @param string $name
-     *
-     * @return string
-     *
      * @throws SignedHeaderNotPresentException
      */
-    private function headerValue($name)
+    private function headerValue(string $name): string
     {
-        if ($this->message->hasHeader($name)) {
-            $header = '';
-            $values = $this->message->getHeader($name);
-            while (sizeof($values) > 0) {
-                $header = $header.$values[0];
-                array_shift($values);
-                if (sizeof($values) > 0) {
-                    $header = $header.', ';
-                }
-            }
-            // $header = $this->message->getHeader($name);
-
-            return $header;
-        // return end($header);
-        } else {
+        if (!$this->message->hasHeader($name)) {
             throw new SignedHeaderNotPresentException("Header '$name' not in message");
         }
+
+        $header = '';
+        $values = $this->message->getHeader($name);
+        while (sizeof($values) > 0) {
+            $header = $header.$values[0];
+            array_shift($values);
+            if (sizeof($values) > 0) {
+                $header = $header.', ';
+            }
+        }
+
+        // $header = $this->message->getHeader($name);
+
+        return $header;
+        // return end($header);
     }
 
-    /**
-     * @return string
-     */
-    private function requestTargetLine()
+    private function requestTargetLine(): string
     {
         return sprintf(
             '(request-target): %s %s',

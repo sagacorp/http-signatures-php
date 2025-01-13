@@ -24,7 +24,7 @@ class SignatureParametersTest extends TestCase
         $signature
             ->expects($this->any())
             ->method('string')
-            ->will($this->returnValue('thesignature'));
+            ->willReturn('thesignature');
 
         $sp = new SignatureParameters($key, $algorithm, $headerList, $signature);
 
@@ -47,7 +47,7 @@ class SignatureParametersTest extends TestCase
         $signature
             ->expects($this->any())
             ->method('string')
-            ->will($this->returnValue('thesignature'));
+            ->willReturn('thesignature');
 
         $sp = new SignatureParameters($key, $algorithm, $headerList, $signature);
 

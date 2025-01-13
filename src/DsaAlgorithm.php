@@ -2,55 +2,36 @@
 
 namespace HttpSignatures;
 
+use phpseclib3\Crypt\DSA;
 use phpseclib3\Crypt\PublicKeyLoader;
 
-class DsaAlgorithm implements AlgorithmInterface
+readonly class DsaAlgorithm implements AsymmetricAlgorithmInterface
 {
-    /** @var string */
-    private $digestName;
-
-    /**
-     * @param string $digestName
-     */
-    public function __construct($digestName)
+    public function __construct(private string $digestName)
     {
-        $this->digestName = $digestName;
     }
 
-    /**
-     * @return string
-     */
-    public function name()
+    public function name(): string
     {
         return sprintf('dsa-%s', $this->digestName);
     }
 
-    /**
-     * @param string $key
-     * @param string $data
-     *
-     * @return string
-     *
-     * @throws \HttpSignatures\AlgorithmException
-     */
-    public function sign($signingKey, $data)
+    public function sign(string $key, string $data): string
     {
-        $dsa = PublicKeyLoader::load($signingKey)
-        ->withHash($this->digestName);
-        $signature = $dsa->sign($data);
+        /** @var DSA\PrivateKey $dsa */
+        $dsa = PublicKeyLoader::load($key)->withHash($this->digestName);
 
-        return $signature;
+        return $dsa->sign($data);
     }
 
-    public function verify($message, $signature, $verifyingKey)
+    public function verify(string $message, string $signature, array|string $verifyingKey): bool
     {
-        $ec = PublicKeyLoader::load($verifyingKey)
-          ->withHash($this->digestName);
-        try {
-            $valid = $ec->verify($message, base64_decode($signature));
+        /** @var DSA\PublicKey $dsa */
+        $dsa = PublicKeyLoader::load($verifyingKey)->withHash($this->digestName);
 
-            return $valid;
-        } catch (\Exception $e) {
+        try {
+            return $dsa->verify($message, base64_decode($signature));
+        } catch (\Exception) {
             // Tolerate malformed signature
             return false;
         }

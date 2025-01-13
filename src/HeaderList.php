@@ -4,58 +4,37 @@ namespace HttpSignatures;
 
 class HeaderList
 {
-    /** @var array */
-    public $names;
+    public array $names;
 
-    /** @var bool */
-    private $headerListSpecified;
+    private bool $headerListSpecified;
 
-    public function __construct(array $names, $headerListSpecified = true)
+    public function __construct(?array $names, bool $headerListSpecified = true)
     {
-        if (!$names) {
-            $names = ['date'];
-            $this->headerListSpecified = false;
-        } else {
-            $this->names = array_map(
-              [$this, 'normalize'],
-              $names
-          );
+        if ($names) {
+            $this->names = array_map(fn (string $name) => $this->normalize($name), $names);
             $this->headerListSpecified = $headerListSpecified;
+        } else {
+            $this->names = [];
+            $this->headerListSpecified = false;
         }
     }
 
-    /**
-     * @param $string
-     *
-     * @return HeaderList
-     */
-    public static function fromString($string)
+    public static function fromString(string $string): HeaderList
     {
         return new static(explode(' ', $string));
     }
 
-    /**
-     * @return string
-     */
-    public function string()
+    public function string(): string
     {
         return implode(' ', $this->names);
     }
 
-    /**
-     * @return bool
-     */
-    public function headerListSpecified()
+    public function headerListSpecified(): bool
     {
         return $this->headerListSpecified;
     }
 
-    /**
-     * @param $name
-     *
-     * @return string
-     */
-    private function normalize($name)
+    private function normalize(string $name): string
     {
         return strtolower($name);
     }

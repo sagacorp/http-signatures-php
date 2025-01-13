@@ -8,9 +8,12 @@ use PHPUnit\Framework\TestCase;
 
 class SignerDsaTest extends TestCase
 {
-    private $context;
+    private Request $message;
+    private string $dsaPrivateKey;
+    private Context $sha1context;
+    private Context $sha256context;
 
-    public function setUp()
+    public function setUp(): void
     {
         $dsaKeyFile = __DIR__.'/keys/DSA.key';
         $this->dsaPrivateKey = file_get_contents($dsaKeyFile);
@@ -25,9 +28,9 @@ class SignerDsaTest extends TestCase
             'headers' => ['(request-target)', 'date'],
         ]);
         $this->message = new Request(
-          'GET',
-          '/path?query=123',
-          ['date' => 'today', 'accept' => 'llamas']
+            'GET',
+            '/path?query=123',
+            ['date' => 'today', 'accept' => 'llamas']
         );
     }
 
@@ -50,8 +53,8 @@ class SignerDsaTest extends TestCase
     public function testGetSigningString()
     {
         $this->assertEquals(
-          "(request-target): get /path?query=123\ndate: today",
-          $this->sha256context->signer()->getSigningString($this->message)
+            "(request-target): get /path?query=123\ndate: today",
+            $this->sha256context->signer()->getSigningString($this->message)
         );
     }
 
@@ -59,9 +62,9 @@ class SignerDsaTest extends TestCase
     {
         $this->expectException(\HTTPSignatures\AlgorithmException::class);
         $sha224context = new Context([
-              'keys' => ['prime256v1' => $this->dsaPrivateKey],
-              'algorithm' => 'dsa-sha224',
-              'headers' => ['(request-target)', 'date'],
-          ]);
+            'keys' => ['prime256v1' => $this->dsaPrivateKey],
+            'algorithm' => 'dsa-sha224',
+            'headers' => ['(request-target)', 'date'],
+        ]);
     }
 }

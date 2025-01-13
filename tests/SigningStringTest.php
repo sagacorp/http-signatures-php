@@ -6,19 +6,22 @@ use GuzzleHttp\Psr7\Request;
 use HttpSignatures\HeaderList;
 use HttpSignatures\SigningString;
 use PHPUnit\Framework\TestCase;
-use Symfony\Bridge\PsrHttpMessage\Factory\DiactorosFactory;
+use Symfony\Bridge\PsrHttpMessage\Factory\PsrHttpFactory;
 use Symfony\Component\HttpFoundation\Request as SymfonyRequest;
 
 class SigningStringTest extends TestCase
 {
-    public function setUp()
+    private Request $message;
+    private PsrHttpFactory $psr7Factory;
+
+    public function setUp(): void
     {
         $this->message = new Request(
-          'GET',
-          '/path',
-          ['date' => 'Mon, 28 Jul 2014 15:39:13 -0700']
+            'GET',
+            '/path',
+            ['date' => 'Mon, 28 Jul 2014 15:39:13 -0700']
         );
-        $this->psr7Factory = new DiactorosFactory();
+        $this->psr7Factory = new PsrHttpFactory();
     }
 
     public function testWithoutQueryString()
@@ -37,8 +40,8 @@ class SigningStringTest extends TestCase
         $headerList = new HeaderList(['(request-target)', 'date']);
         $uri = $this->message->getUri()->withQuery('a=antelope&z=zebra');
         $ss = new SigningString(
-          $headerList,
-          $this->message->withUri($uri)
+            $headerList,
+            $this->message->withUri($uri)
         );
 
         $this->assertEquals(
@@ -52,8 +55,8 @@ class SigningStringTest extends TestCase
         $headerList = new HeaderList(['(request-target)', 'date']);
         $uri = $this->message->getUri()->withQuery('z=zebra&a=antelope');
         $ss = new SigningString(
-          $headerList,
-          $this->message->withUri($uri)
+            $headerList,
+            $this->message->withUri($uri)
         );
 
         $this->assertEquals(
@@ -90,8 +93,8 @@ class SigningStringTest extends TestCase
         $uri = $this->message->getUri()->withPath('/');
 
         $ss = new SigningString(
-          $headerList,
-          $this->message->withUri($uri)
+            $headerList,
+            $this->message->withUri($uri)
         );
         $this->expectException(\HttpSignatures\Exception::class);
         $ss->string();
@@ -143,8 +146,8 @@ class SigningStringTest extends TestCase
 
         $headerList = new HeaderList(['(request-target)', 'thisisempty', 'date']);
         $producedSigningStringObj = new SigningString(
-          $headerList,
-          $this->message->withHeader('ThisIsEmpty', '')
+            $headerList,
+            $this->message->withHeader('ThisIsEmpty', '')
         );
         $producedSigningString = $producedSigningStringObj->string();
         $this->assertEquals(

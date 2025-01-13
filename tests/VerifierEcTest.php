@@ -9,20 +9,16 @@ use PHPUnit\Framework\TestCase;
 
 class VerifierEcTest extends TestCase
 {
-    const DATE = 'Fri, 01 Aug 2014 13:44:32 -0700';
-    const DATE_DIFFERENT = 'Fri, 01 Aug 2014 13:44:33 -0700';
+    public const DATE = 'Fri, 01 Aug 2014 13:44:32 -0700';
+    public const DATE_DIFFERENT = 'Fri, 01 Aug 2014 13:44:33 -0700';
 
-    /**
-     * @var Verifier
-     */
-    private $verifier;
+    private Verifier $verifier;
 
-    /**
-     * @var Request
-     */
-    private $message;
+    private Request $sha256SignedMessage;
+    private Request $sha256AuthorizedMessage;
+    private string $p256PublicKey;
 
-    public function setUp()
+    public function setUp(): void
     {
         $this->setUpEcVerifier();
         $baseMessage = new Request('GET', '/path?query=123', [
@@ -57,8 +53,8 @@ class VerifierEcTest extends TestCase
 
         $this->assertTrue($this->verifier->isSigned($this->sha256SignedMessage));
         $this->assertEquals(
-          "Message SigningString: 'KHJlcXVlc3QtdGFyZ2V0KTogZ2V0IC9wYXRoP3F1ZXJ5PTEyMwpkYXRlOiB0b2RheQ=='",
-          $this->verifier->getStatus()[0]
+            "Message SigningString: 'KHJlcXVlc3QtdGFyZ2V0KTogZ2V0IC9wYXRoP3F1ZXJ5PTEyMwpkYXRlOiB0b2RheQ=='",
+            $this->verifier->getStatus()[0]
         );
     }
 
@@ -71,8 +67,8 @@ class VerifierEcTest extends TestCase
     public function testRejectTamperedEcRequestMethod()
     {
         $this->assertFalse($this->verifier->isSigned(
-          $this->sha256SignedMessage->withMethod('POST')
-      ));
+            $this->sha256SignedMessage->withMethod('POST')
+        ));
     }
 
     public function testRejectTamperedEcDate()
@@ -85,40 +81,40 @@ class VerifierEcTest extends TestCase
     public function testRejectTamperedSignature()
     {
         $this->assertFalse($this->verifier->isSigned(
-          $this->sha256SignedMessage->withHeader(
-              'Signature',
-              preg_replace(
-                '/signature="/',
-                'signature="x',
-                $this->sha256SignedMessage->getHeader('Signature')[0]
-              )
+            $this->sha256SignedMessage->withHeader(
+                'Signature',
+                preg_replace(
+                    '/signature="/',
+                    'signature="x',
+                    $this->sha256SignedMessage->getHeader('Signature')[0]
+                )
             )
-          )
+        )
         );
     }
 
     public function testRejectEcMessageWithoutSignatureHeader()
     {
         $this->assertFalse($this->verifier->isSigned(
-        $this->sha256SignedMessage->withoutHeader('Signature')
-      ));
+            $this->sha256SignedMessage->withoutHeader('Signature')
+        ));
     }
 
     public function testRejectEcMessageWithGarbageSignatureHeader()
     {
         $this->assertFalse(
-          $this->verifier->isSigned(
-            $this->sha256SignedMessage->withHeader('Signature', 'not="a",valid="signature"')
-          )
+            $this->verifier->isSigned(
+                $this->sha256SignedMessage->withHeader('Signature', 'not="a",valid="signature"')
+            )
         );
     }
 
     public function testRejectEcMessageWithPartialSignatureHeader()
     {
         $this->assertFalse(
-          $this->verifier->isSigned(
-            $this->sha256SignedMessage->withHeader('Signature', 'keyId="aa",algorithm="bb"')
-          )
+            $this->verifier->isSigned(
+                $this->sha256SignedMessage->withHeader('Signature', 'keyId="aa",algorithm="bb"')
+            )
         );
     }
 
@@ -129,20 +125,20 @@ class VerifierEcTest extends TestCase
         // $this->assertFalse($verifier->isSigned($this->sha1SignedMessage));
         $this->assertFalse($verifier->isSigned($this->sha256SignedMessage));
         $this->assertEquals(
-          "Cannot locate key for supplied keyId 'prime256v1'",
-          $verifier->getStatus()[0]
+            "Cannot locate key for supplied keyId 'prime256v1'",
+            $verifier->getStatus()[0]
         );
         $verifier->isSigned($this->sha256SignedMessage);
         $this->assertEquals(
-          1,
-          sizeof($verifier->getStatus())
+            1,
+            sizeof($verifier->getStatus())
         );
     }
 
     public function testRejectsEcMessageMissingSignedHeaders()
     {
         $this->assertFalse($this->verifier->isSigned(
-          $this->sha256SignedMessage->withoutHeader('Date')
+            $this->sha256SignedMessage->withoutHeader('Date')
         ));
     }
 }

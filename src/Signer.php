@@ -6,59 +6,34 @@ use Psr\Http\Message\RequestInterface;
 
 class Signer
 {
-    /** @var Key */
-    private $key;
-
-    /** @var HmacAlgorithm */
-    private $algorithm;
-
-    /** @var HeaderList */
-    private $headerList;
-
-    /**
-     * @param Key           $key
-     * @param HmacAlgorithm $algorithm
-     * @param HeaderList    $headerList
-     */
-    public function __construct($key, $algorithm, $headerList)
+    public function __construct(private readonly Key $key, private readonly ?AlgorithmInterface $algorithm, private HeaderList $headerList)
     {
-        $this->key = $key;
-        $this->algorithm = $algorithm;
-        $this->headerList = $headerList;
     }
 
     /**
-     * @param RequestInterface $message
-     *
-     * @return RequestInterface
+     * @throws KeyException
      */
-    public function sign($message)
+    public function sign(RequestInterface $message): RequestInterface
     {
         $signatureParameters = $this->signatureParameters($message);
-        $message = $message->withAddedHeader('Signature', $signatureParameters->string());
 
-        return $message;
+        return $message->withAddedHeader('Signature', $signatureParameters->string());
     }
 
     /**
-     * @param RequestInterface $message
-     *
-     * @return RequestInterface
+     * @throws KeyException
      */
-    public function authorize($message)
+    public function authorize(RequestInterface $message): RequestInterface
     {
         $signatureParameters = $this->signatureParameters($message);
-        $message = $message->withAddedHeader('Authorization', 'Signature '.$signatureParameters->string());
 
-        return $message;
+        return $message->withAddedHeader('Authorization', 'Signature '.$signatureParameters->string());
     }
 
     /**
-     * @param RequestInterface $message
-     *
-     * @return RequestInterface
+     * @throws KeyException
      */
-    public function signWithDigest($message)
+    public function signWithDigest(RequestInterface $message): RequestInterface
     {
         $bodyDigest = new BodyDigest();
         $this->headerList = $bodyDigest->putDigestInHeaderList($this->headerList);
@@ -67,11 +42,9 @@ class Signer
     }
 
     /**
-     * @param RequestInterface $message
-     *
-     * @return RequestInterface
+     * @throws KeyException
      */
-    public function authorizeWithDigest($message)
+    public function authorizeWithDigest(RequestInterface $message): RequestInterface
     {
         $bodyDigest = new BodyDigest();
         $this->headerList = $bodyDigest->putDigestInHeaderList($this->headerList);
@@ -79,12 +52,7 @@ class Signer
         return $this->authorize($bodyDigest->setDigestHeader($message));
     }
 
-    /**
-     * @param RequestInterface $message
-     *
-     * @return SignatureParameters
-     */
-    private function signatureParameters($message)
+    private function signatureParameters(RequestInterface $message): SignatureParameters
     {
         return new SignatureParameters(
             $this->key,
@@ -94,12 +62,7 @@ class Signer
         );
     }
 
-    /**
-     * @param RequestInterface $message
-     *
-     * @return Signature
-     */
-    private function signature($message)
+    private function signature(RequestInterface $message): Signature
     {
         return new Signature(
             $message,
@@ -109,7 +72,7 @@ class Signer
         );
     }
 
-    public function getSigningString($message)
+    public function getSigningString($message): string
     {
         $singingString = new SigningString($this->headerList, $message);
 

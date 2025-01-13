@@ -8,9 +8,12 @@ use PHPUnit\Framework\TestCase;
 
 class DsaContextTest extends TestCase
 {
-    private $context;
+    private string $dsaPrivateKey;
+    private Context $sha1context;
+    private Context $sha256context;
+    private Request $message;
 
-    public function setUp()
+    public function setUp(): void
     {
         $dsaKeyFile = __DIR__.'/keys/DSA.key';
         $this->dsaPrivateKey = file_get_contents($dsaKeyFile);
@@ -78,9 +81,9 @@ class DsaContextTest extends TestCase
     {
         $this->expectException(\HTTPSignatures\AlgorithmException::class);
         $sha224context = new Context([
-              'keys' => ['dsa1' => $this->dsaPrivateKey],
-              'algorithm' => 'dsa-sha224',
-              'headers' => ['(request-target)', 'date'],
-          ]);
+            'keys' => ['dsa1' => $this->dsaPrivateKey],
+            'algorithm' => 'dsa-sha224',
+            'headers' => ['(request-target)', 'date'],
+        ]);
     }
 }

@@ -2,46 +2,28 @@
 
 namespace HttpSignatures;
 
-class SignatureParameters
+readonly class SignatureParameters
 {
-    /** @var Key */
-    public $key;
-
-    /** @var AlgorithmInterface */
-    public $algorithm;
-
-    /** @var HeaderList */
-    public $headerList;
-
-    /** @var Signature */
-    public $signature;
-
-    /**
-     * @param Key                $key
-     * @param AlgorithmInterface $algorithm
-     * @param HeaderList         $headerList
-     * @param Signature          $signature
-     */
-    public function __construct($key, $algorithm, $headerList, $signature)
-    {
-        $this->key = $key;
-        $this->algorithm = $algorithm;
-        $this->headerList = $headerList;
-        $this->signature = $signature;
+    public function __construct(
+        private Key $key,
+        private AlgorithmInterface $algorithm,
+        private HeaderList $headerList,
+        private Signature $signature,
+    ) {
     }
 
     /**
-     * @return string
+     * @throws KeyException
      */
-    public function string()
+    public function string(): string
     {
         return implode(',', $this->parameterComponents());
     }
 
     /**
-     * @return array
+     * @throws KeyException
      */
-    private function parameterComponents()
+    private function parameterComponents(): array
     {
         $components = [];
         $components[] = sprintf('keyId="%s"', $this->key->getId());
@@ -55,9 +37,9 @@ class SignatureParameters
     }
 
     /**
-     * @return string
+     * @throws KeyException
      */
-    private function signatureBase64()
+    private function signatureBase64(): string
     {
         return base64_encode($this->signature->string());
     }

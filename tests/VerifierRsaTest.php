@@ -10,20 +10,15 @@ use PHPUnit\Framework\TestCase;
 
 class VerifierRsaTest extends TestCase
 {
-    const DATE = 'Fri, 01 Aug 2014 13:44:32 -0700';
-    const DATE_DIFFERENT = 'Fri, 01 Aug 2014 13:44:33 -0700';
+    public const DATE = 'Fri, 01 Aug 2014 13:44:32 -0700';
+    public const DATE_DIFFERENT = 'Fri, 01 Aug 2014 13:44:33 -0700';
 
-    /**
-     * @var Verifier
-     */
-    private $verifier;
+    private Verifier $verifier;
 
-    /**
-     * @var Request
-     */
-    private $message;
+    private Request $sha256SignedMessage;
+    private Request $sha256AuthorizedMessage;
 
-    public function setUp()
+    public function setUp(): void
     {
         $this->setUpRsaVerifier();
         $baseMessage = new Request('GET', '/path?query=123', [
@@ -84,8 +79,8 @@ class VerifierRsaTest extends TestCase
         //     $this->sha1SignedMessage->withMethod('POST')
         // ));
         $this->assertFalse($this->verifier->isSigned(
-          $this->sha256SignedMessage->withMethod('POST')
-      ));
+            $this->sha256SignedMessage->withMethod('POST')
+        ));
     }
 
     public function testRejectTamperedRsaDate()
@@ -113,15 +108,15 @@ class VerifierRsaTest extends TestCase
         // );
 
         $this->assertFalse($this->verifier->isSigned(
-          $this->sha256SignedMessage->withHeader(
-              'Signature',
-              preg_replace(
-                '/signature="/',
-                'signature="x',
-                $this->sha256SignedMessage->getHeader('Signature')[0]
-              )
+            $this->sha256SignedMessage->withHeader(
+                'Signature',
+                preg_replace(
+                    '/signature="/',
+                    'signature="x',
+                    $this->sha256SignedMessage->getHeader('Signature')[0]
+                )
             )
-          )
+        )
         );
     }
 
@@ -131,8 +126,8 @@ class VerifierRsaTest extends TestCase
         //   $this->sha1SignedMessage->withoutHeader('Signature')
         // ));
         $this->assertFalse($this->verifier->isSigned(
-        $this->sha256SignedMessage->withoutHeader('Signature')
-      ));
+            $this->sha256SignedMessage->withoutHeader('Signature')
+        ));
     }
 
     public function testRejectRsaMessageWithGarbageSignatureHeader()
@@ -142,9 +137,9 @@ class VerifierRsaTest extends TestCase
         //   $this->sha1SignedMessage->withHeader('Signature', 'not="a",valid="signature"')
         // );
         $this->assertFalse(
-          $this->verifier->isSigned(
-            $this->sha256SignedMessage->withHeader('Signature', 'not="a",valid="signature"')
-          )
+            $this->verifier->isSigned(
+                $this->sha256SignedMessage->withHeader('Signature', 'not="a",valid="signature"')
+            )
         );
     }
 
@@ -155,9 +150,9 @@ class VerifierRsaTest extends TestCase
         //   $this->sha1SignedMessage->withHeader('Signature', 'keyId="aa",algorithm="bb"')
         // );
         $this->assertFalse(
-          $this->verifier->isSigned(
-            $this->sha256SignedMessage->withHeader('Signature', 'keyId="aa",algorithm="bb"')
-          )
+            $this->verifier->isSigned(
+                $this->sha256SignedMessage->withHeader('Signature', 'keyId="aa",algorithm="bb"')
+            )
         );
     }
 
@@ -168,13 +163,13 @@ class VerifierRsaTest extends TestCase
         // $this->assertFalse($verifier->isSigned($this->sha1SignedMessage));
         $this->assertFalse($verifier->isSigned($this->sha256SignedMessage));
         $this->assertEquals(
-          "Cannot locate key for supplied keyId 'rsa1'",
-          $verifier->getStatus()[0]
+            "Cannot locate key for supplied keyId 'rsa1'",
+            $verifier->getStatus()[0]
         );
         $verifier->isSigned($this->sha256SignedMessage);
         $this->assertEquals(
-          1,
-          sizeof($verifier->getStatus())
+            1,
+            sizeof($verifier->getStatus())
         );
     }
 
@@ -184,7 +179,7 @@ class VerifierRsaTest extends TestCase
         //   $this->sha1SignedMessage->withoutHeader('Date')
         // ));
         $this->assertFalse($this->verifier->isSigned(
-          $this->sha256SignedMessage->withoutHeader('Date')
+            $this->sha256SignedMessage->withoutHeader('Date')
         ));
     }
 }

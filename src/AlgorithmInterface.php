@@ -4,16 +4,7 @@ namespace HttpSignatures;
 
 interface AlgorithmInterface
 {
-    /**
-     * @return string
-     */
-    public function name();
+    public function name(): string;
 
-    /**
-     * @param string $key
-     * @param string $data
-     *
-     * @return string
-     */
-    public function sign($key, $data);
+    public function sign(string $key, string $data): string;
 }

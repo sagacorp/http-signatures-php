@@ -8,9 +8,11 @@ use PHPUnit\Framework\TestCase;
 
 class HmacContextTest extends TestCase
 {
-    private $context;
+    private Context $noDigestContext;
+    private Context $withDigestContext;
+    private Context $noHeadersContext;
 
-    public function setUp()
+    public function setUp(): void
     {
         $this->noDigestContext = new Context([
             'keys' => ['pda' => 'secret'],
@@ -32,8 +34,8 @@ class HmacContextTest extends TestCase
     {
         $authorizeHeaderString = 'Bearer abc456';
         $message = new Request(
-          'GET', '/path?query=123',
-          ['date' => 'today', 'accept' => 'llamas', 'Authorize' => $authorizeHeaderString]);
+            'GET', '/path?query=123',
+            ['date' => 'today', 'accept' => 'llamas', 'Authorize' => $authorizeHeaderString]);
         $message = $this->noDigestContext->signer()->sign($message);
         $expectedString = implode(',', [
             'keyId="pda"',
@@ -110,9 +112,9 @@ class HmacContextTest extends TestCase
     {
         $message = new Request(
             'PUT', '/things/thething?query=123',
-              ['date' => 'today',
-              'accept' => 'llamas',
-              'Digest' => 'SHA-256=E/P+4y4x6EySO9qNAjCtQKxVwE1xKsNI/k+cjK+vtLU=', ],
+            ['date' => 'today',
+                'accept' => 'llamas',
+                'Digest' => 'SHA-256=E/P+4y4x6EySO9qNAjCtQKxVwE1xKsNI/k+cjK+vtLU=', ],
             'Thing to PUT at /things/thething please...');
         $message = $this->noDigestContext->signer()->signWithDigest($message);
 
@@ -143,8 +145,8 @@ class HmacContextTest extends TestCase
     {
         $message = new Request(
             'POST', '/path?query=123',
-              ['date' => 'today',
-              'accept' => 'llamas', ],
+            ['date' => 'today',
+                'accept' => 'llamas', ],
             'Stuff that belongs in /path');
         $message = $this->withDigestContext->signer()->signWithDigest($message);
 
@@ -175,8 +177,8 @@ class HmacContextTest extends TestCase
     {
         $message = new Request(
             'GET', '/path?query=123',
-              ['date' => 'today',
-              'accept' => 'llamas', ]);
+            ['date' => 'today',
+                'accept' => 'llamas', ]);
         $message = $this->withDigestContext->signer()->signWithDigest($message);
 
         $expectedString = implode(',', [

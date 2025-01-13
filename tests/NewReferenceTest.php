@@ -16,16 +16,16 @@ use PHPUnit\Framework\TestCase;
  */
 class NewReferenceTest extends TestCase
 {
-    const referencePublicKey =
-    '-----BEGIN PUBLIC KEY-----
+    public const referencePublicKey =
+        '-----BEGIN PUBLIC KEY-----
 MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQDCFENGw33yGihy92pDjZQhl0C3
 6rPJj+CvfSC8+q28hxA161QFNUd13wuCTUcq0Qd2qsBe/2hFyc2DCJJg0h1L78+6
 Z4UMR7EOcpfdUE9Hf3m/hs+FUR45uBJeDK1HSFHD8bHKD6kv8FPGfJTotc+2xjJw
 oYi+1hqp1fIekaxsyQIDAQAB
 -----END PUBLIC KEY-----';
 
-    const referencePrivateKey =
-    '-----BEGIN RSA PRIVATE KEY-----
+    public const referencePrivateKey =
+        '-----BEGIN RSA PRIVATE KEY-----
 MIICXgIBAAKBgQDCFENGw33yGihy92pDjZQhl0C36rPJj+CvfSC8+q28hxA161QF
 NUd13wuCTUcq0Qd2qsBe/2hFyc2DCJJg0h1L78+6Z4UMR7EOcpfdUE9Hf3m/hs+F
 UR45uBJeDK1HSFHD8bHKD6kv8FPGfJTotc+2xjJwoYi+1hqp1fIekaxsyQIDAQAB
@@ -41,90 +41,84 @@ G6aFKaqQfOXKCyWoUiVknQJAXrlgySFci/2ueKlIE1QqIiLSZ8V8OlpFLRnb1pzI
 7U1yQXnTAEFYM560yJlzUpOb1V4cScGd365tiSMvxLOvTA==
 -----END RSA PRIVATE KEY-----';
 
-    const referenceBodyDigest =
-    'SHA-256=X48E9qOokqqrvdts8nOJRJN3OWDUoyWxBf7kbu9DBPE=';
+    public const referenceBodyDigest =
+        'SHA-256=X48E9qOokqqrvdts8nOJRJN3OWDUoyWxBf7kbu9DBPE=';
 
-    const referenceHeaders =
-    [
-        'Host' => 'example.com',
-        'Date' => 'Sun, 05 Jan 2014 21:31:40 GMT',
-        'Content-Type' => 'application/json',
-        'Content-Length' => '18',
-        'Digest' => self::referenceBodyDigest,
-    ];
+    public const referenceHeaders =
+        [
+            'Host' => 'example.com',
+            'Date' => 'Sun, 05 Jan 2014 21:31:40 GMT',
+            'Content-Type' => 'application/json',
+            'Content-Length' => '18',
+            'Digest' => self::referenceBodyDigest,
+        ];
 
-    const referenceBody = '{"hello": "world"}';
-    const referenceMethod = 'POST';
-    const referenceUri = '/foo bar?test=this%3Dthat&actions=first%26second';
+    public const referenceBody = '{"hello": "world"}';
+    public const referenceMethod = 'POST';
+    public const referenceUri = '/foo bar?test=this%3Dthat&actions=first%26second';
     // const referenceUri = '/foo?param=value&pet=dog';
 
     // Header List if no headers parameter is specified
-    const defaultHeaders = ['date'];
+    public const defaultHeaders = ['date'];
 
-    const defaultTestSignatureLineValue =
-      'keyId="Test",algorithm="rsa-sha256",'.
-      'signature="SjWJWbWN7i0wzBvtPl8rbASWz5xQW6mcJmn+ibttBqtifLN7Sazz'.
-      '6m79cNfwwb8DMJ5cou1s7uEGKKCs+FLEEaDV5lp7q25WqS+lavg7T8hc0GppauB'.
-      '6hbgEKTwblDHYGEtbGmtdHgVCk9SuS13F0hZ8FD0k/5OxEPXe5WozsbM="';
+    public const defaultTestSignatureLineValue =
+        'keyId="Test",algorithm="rsa-sha256",'.
+        'signature="SjWJWbWN7i0wzBvtPl8rbASWz5xQW6mcJmn+ibttBqtifLN7Sazz'.
+        '6m79cNfwwb8DMJ5cou1s7uEGKKCs+FLEEaDV5lp7q25WqS+lavg7T8hc0GppauB'.
+        '6hbgEKTwblDHYGEtbGmtdHgVCk9SuS13F0hZ8FD0k/5OxEPXe5WozsbM="';
 
-    const defaultTestAuthorizationHeaderValue =
-      'Signature '.self::defaultTestSignatureLineValue;
+    public const defaultTestAuthorizationHeaderValue =
+        'Signature '.self::defaultTestSignatureLineValue;
 
-    const defaultTestSigningString = 'date: Sun, 05 Jan 2014 21:31:40 GMT';
+    public const defaultTestSigningString = 'date: Sun, 05 Jan 2014 21:31:40 GMT';
 
-    const basicTestSignatureHeaderValue =
-      'keyId="Test",algorithm="rsa-sha256",'.
-      'headers="(request-target) host date",signature="RyXtFqKnLCDuy+RdHE'.
-      'Zm59xypzUfAeahim81NsxWExNFAJBs+DOcMaQjvW9+uKMl0lNrVFfZzP8eDzZ04UTA'.
-      '7YKaRq+CB9ybTZ3LHZHLlziJL3RmDDFFVZpc63klPw8Kju7C5ZvsNM7byQdevkqcOT'.
-      'p+6xuESUhHr2TGQfjdsiA="';
+    public const basicTestSignatureHeaderValue =
+        'keyId="Test",algorithm="rsa-sha256",'.
+        'headers="(request-target) host date",signature="RyXtFqKnLCDuy+RdHE'.
+        'Zm59xypzUfAeahim81NsxWExNFAJBs+DOcMaQjvW9+uKMl0lNrVFfZzP8eDzZ04UTA'.
+        '7YKaRq+CB9ybTZ3LHZHLlziJL3RmDDFFVZpc63klPw8Kju7C5ZvsNM7byQdevkqcOT'.
+        'p+6xuESUhHr2TGQfjdsiA="';
 
-    const basicTestAuthorizationHeaderValue =
+    public const basicTestAuthorizationHeaderValue =
         'Signature '.self::basicTestSignatureHeaderValue;
 
-    const basicTestSigningString =
-'(request-target): post /foo%20bar?test=this%3Dthat&actions=first%26second
+    public const basicTestSigningString =
+        '(request-target): post /foo%20bar?test=this%3Dthat&actions=first%26second
 host: example.com
 date: Sun, 05 Jan 2014 21:31:40 GMT';
 
-    const basicTestHeaders = ['(request-target)', 'host', 'date'];
+    public const basicTestHeaders = ['(request-target)', 'host', 'date'];
 
-    const allHeadersTestSignatureHeaderValue =
-      'keyId="Test",algorithm="rsa-sha256",'.
-      'headers="(request-target) host date content-type digest content-length",'.
-      'signature="o4kZwMTxTFN06sqFIUf8e1VDWrHMDucI0njxkP0GQidut+953Ce0pTW/leR'.
-      'vSC/Wka+EJ9rZbkV8hHwcZX02DYZPKHz16tSP42xSnTQdH4qdDxZZMjuEbHEDJIa1LoOWU'.
-      'TDm3pBioNHtt3iJRTFjw7yr4jmPqgc2LFmGKmbMddQ="';
+    public const allHeadersTestSignatureHeaderValue =
+        'keyId="Test",algorithm="rsa-sha256",'.
+        'headers="(request-target) host date content-type digest content-length",'.
+        'signature="o4kZwMTxTFN06sqFIUf8e1VDWrHMDucI0njxkP0GQidut+953Ce0pTW/leR'.
+        'vSC/Wka+EJ9rZbkV8hHwcZX02DYZPKHz16tSP42xSnTQdH4qdDxZZMjuEbHEDJIa1LoOWU'.
+        'TDm3pBioNHtt3iJRTFjw7yr4jmPqgc2LFmGKmbMddQ="';
 
-    const allHeadersTestAuthorizationHeaderValue =
-      'Signature '.self::allHeadersTestSignatureHeaderValue;
+    public const allHeadersTestAuthorizationHeaderValue =
+        'Signature '.self::allHeadersTestSignatureHeaderValue;
 
-    const allHeadersTestSigningString =
-'(request-target): post /foo%20bar?test=this%3Dthat&actions=first%26second
+    public const allHeadersTestSigningString =
+        '(request-target): post /foo%20bar?test=this%3Dthat&actions=first%26second
 host: example.com
 date: Sun, 05 Jan 2014 21:31:40 GMT
 content-type: application/json
 digest: SHA-256=X48E9qOokqqrvdts8nOJRJN3OWDUoyWxBf7kbu9DBPE=
 content-length: 18';
 
-    const allHeadersTestHeaders =
+    public const allHeadersTestHeaders =
         ['(request-target)', 'host', 'date', 'content-type', 'digest', 'content-length'];
-    /**
-     * @var Request
-     */
-    private $referenceMessage;
 
-    /**
-     * @var KeyStore
-     */
-    private $signingKeyStore;
+    private Request $referenceMessage;
+    private Verifier $verifier;
 
     public function testTrue()
     {
         $this->assertTrue(true);
     }
 
-    public function setUp()
+    public function setUp(): void
     {
         $this->referenceMessage = new Request(
             self::referenceMethod,
@@ -133,7 +127,6 @@ content-length: 18';
             self::referenceBody
         );
 
-        $this->signingKey = ['Test' => self::referencePrivateKey];
         $verifyingKeyStore = new KeyStore(['Test' => self::referencePublicKey]);
         $this->verifier = new Verifier($verifyingKeyStore);
     }
@@ -178,8 +171,8 @@ content-length: 18';
 
         // authorize() does not interfere with Signature header
         $this->assertEquals(
-          0,
-          sizeof($authorizedMessage->getHeader('Signature'))
+            0,
+            sizeof($authorizedMessage->getHeader('Signature'))
         );
         $signedMessage = $defaultContext->signer()->sign($this->referenceMessage);
         $this->assertEquals(
@@ -188,8 +181,8 @@ content-length: 18';
         );
         // sign() does not interfere with Authorization header
         $this->assertEquals(
-          0,
-          sizeof($signedMessage->getHeader('Authorization'))
+            0,
+            sizeof($signedMessage->getHeader('Authorization'))
         );
 
         $this->assertTrue(

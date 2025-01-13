@@ -5,52 +5,37 @@ namespace HttpSignatures;
 use phpseclib3\Crypt\PublicKeyLoader;
 use phpseclib3\Crypt\RSA;
 
-class RsaAlgorithm implements AlgorithmInterface
+readonly class RsaAlgorithm implements AsymmetricAlgorithmInterface
 {
-    /** @var string */
-    private $digestName;
-
-    /**
-     * @param string $digestName
-     */
-    public function __construct($digestName)
+    public function __construct(private string $digestName)
     {
-        $this->digestName = $digestName;
     }
 
-    /**
-     * @return string
-     */
-    public function name()
+    public function name(): string
     {
         return sprintf('rsa-%s', $this->digestName);
     }
 
-    /**
-     * @param string $key
-     * @param string $data
-     *
-     * @return string
-     */
-    public function sign($signingKey, $data)
+    public function sign(string $key, string $data): string
     {
-        $rsa = PublicKeyLoader::load($signingKey)
-          ->withHash($this->digestName)
-          ->withPadding(RSA::SIGNATURE_PKCS1);
-        $signature = $rsa->sign($data);
+        /** @var RSA\PrivateKey $rsa */
+        $rsa = PublicKeyLoader::load($key)->withHash($this->digestName);
+        $rsa = $rsa->withPadding(RSA::SIGNATURE_PKCS1);
 
-        return $signature;
+        return $rsa->sign($data);
     }
 
-    public function verify($message, $signature, $verifyingKey)
+    /**
+     * @throws \Exception
+     */
+    public function verify(string $message, string $signature, array|string $verifyingKey): bool
     {
-        $rsa = PublicKeyLoader::load($verifyingKey)
-          ->withHash($this->digestName)
-          ->withPadding(RSA::SIGNATURE_PKCS1);
-        try {
-            $valid = $rsa->verify($message, base64_decode($signature));
+        /** @var RSA\PublicKey $rsa */
+        $rsa = PublicKeyLoader::load($verifyingKey)->withHash($this->digestName);
+        $rsa = $rsa->withPadding(RSA::SIGNATURE_PKCS1);
 
-            return $valid;
+        try {
+            return $rsa->verify($message, base64_decode($signature));
         } catch (\Exception $e) {
             if ('Invalid signature' != $e->getMessage()) {
                 // Unhandled error state

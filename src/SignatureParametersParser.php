@@ -2,23 +2,16 @@
 
 namespace HttpSignatures;
 
-class SignatureParametersParser
+readonly class SignatureParametersParser
 {
-    /** @var string */
-    private $input;
-
-    /**
-     * @param string $input
-     */
-    public function __construct($input)
+    public function __construct(private string $input)
     {
-        $this->input = $input;
     }
 
     /**
-     * @return array
+     * @throws SignatureParseException
      */
-    public function parse()
+    public function parse(): array
     {
         $result = $this->pairsToAssociative(
             $this->arrayOfPairs()
@@ -28,12 +21,7 @@ class SignatureParametersParser
         return $result;
     }
 
-    /**
-     * @param array $pairs
-     *
-     * @return array
-     */
-    private function pairsToAssociative($pairs)
+    private function pairsToAssociative(array $pairs): array
     {
         $result = [];
         foreach ($pairs as $pair) {
@@ -44,32 +32,22 @@ class SignatureParametersParser
     }
 
     /**
-     * @return array
+     * @throws SignatureParseException
      */
-    private function arrayOfPairs()
+    private function arrayOfPairs(): array
     {
-        return array_map(
-            [$this, 'pair'],
-            $this->segments()
-        );
+        return array_map(fn (string $segment) => $this->pair($segment), $this->segments());
     }
 
-    /**
-     * @return array
-     */
-    private function segments()
+    private function segments(): array
     {
         return explode(',', $this->input);
     }
 
     /**
-     * @param $segment
-     *
-     * @return array
-     *
      * @throws SignatureParseException
      */
-    private function pair($segment)
+    private function pair(string $segment): array
     {
         $segmentPattern = '/\A(keyId|algorithm|headers|signature)="(.*)"\z/';
         $matches = [];
@@ -85,21 +63,17 @@ class SignatureParametersParser
     }
 
     /**
-     * @param $result
-     *
      * @throws SignatureParseException
      */
-    private function validate($result)
+    private function validate(array $result): void
     {
         $this->validateAllKeysArePresent($result);
     }
 
     /**
-     * @param $result
-     *
      * @throws SignatureParseException
      */
-    private function validateAllKeysArePresent($result)
+    private function validateAllKeysArePresent(array $result): void
     {
         // Regexp in pair() ensures no unwanted keys exist.
         // Ensure that all mandatory keys exist.

@@ -6,26 +6,16 @@ use Psr\Http\Message\RequestInterface;
 
 class Verifier
 {
-    /** @var KeyStoreInterface */
-    private $keyStore;
+    private array $status = [];
 
-    /**
-     * @var string
-     */
-    private $status;
-
-    public function __construct(KeyStoreInterface $keyStore)
+    public function __construct(private readonly KeyStoreInterface $keyStore)
     {
-        $this->keyStore = $keyStore;
-        $this->status = [];
     }
 
     /**
-     * @param RequestInterface $message
-     *
-     * @return bool
+     * @throws Exception
      */
-    public function isSigned($message)
+    public function isSigned(RequestInterface $message): bool
     {
         $this->status = [];
         try {
@@ -41,44 +31,30 @@ class Verifier
             // TODO: Match at least one header
             switch (get_class($e)) {
                 case 'HttpSignatures\HeaderException':
-                  $this->status[] = 'Signature header not found';
+                    $this->status[] = 'Signature header not found';
 
-                  return false;
-                  break;
+                    return false;
                 case 'HttpSignatures\SignatureParseException':
-                  $this->status[] = 'Signature header malformed';
+                    $this->status[] = 'Signature header malformed';
 
-                  return false;
-                  break;
-                case 'HttpSignatures\SignatureException':
-                  $this->status[] = $e->getMessage();
-
-                  return false;
-                  break;
+                    return false;
                 case 'HttpSignatures\SignedHeaderNotPresentException':
-                  $this->status[] = $e->getMessage();
-
-                  return false;
-                  break;
                 case 'HttpSignatures\KeyStoreException':
-                  $this->status[] = $e->getMessage();
+                case 'HttpSignatures\SignatureException':
+                    $this->status[] = $e->getMessage();
 
-                  return false;
-                  break;
+                    return false;
                 default:
-                  $this->status[] = 'Unknown exception '.get_class($e).': '.$e->getMessage();
-                  throw $e;
-                  break;
-                }
+                    $this->status[] = 'Unknown exception '.get_class($e).': '.$e->getMessage();
+                    throw $e;
+            }
         }
     }
 
     /**
-     * @param RequestInterface $message
-     *
-     * @return bool
+     * @throws Exception
      */
-    public function isAuthorized($message)
+    public function isAuthorized(RequestInterface $message): bool
     {
         $this->status = [];
         try {
@@ -94,29 +70,21 @@ class Verifier
             // TODO: Match at least one header
             switch (get_class($e)) {
                 case 'HttpSignatures\HeaderException':
-                  $this->status[] = 'Authorization header not found';
+                    $this->status[] = 'Authorization header not found';
 
-                  return false;
-                  break;
+                    return false;
                 case 'HttpSignatures\SignatureParseException':
-                  $this->status[] = 'Authorization header malformed';
+                    $this->status[] = 'Authorization header malformed';
 
-                  return false;
-                  break;
+                    return false;
                 default:
-                  $this->status[] = 'Unknown exception '.get_class($e).': '.$e->getMessage();
-                  throw $e;
-                  break;
-                }
+                    $this->status[] = 'Unknown exception '.get_class($e).': '.$e->getMessage();
+                    throw $e;
+            }
         }
     }
 
-    /**
-     * @param RequestInterface $message
-     *
-     * @return bool
-     */
-    public function isValidDigest($message)
+    public function isValidDigest(RequestInterface $message): bool
     {
         $this->status = [];
         if (0 == sizeof($message->getHeader('Digest'))) {
@@ -126,7 +94,7 @@ class Verifier
         }
         try {
             $bodyDigest = BodyDigest::fromMessage($message);
-        } catch (\HttpSignatures\DigestException $e) {
+        } catch (DigestException $e) {
             $this->status[] = $e->getMessage();
 
             return false;
@@ -141,11 +109,9 @@ class Verifier
     }
 
     /**
-     * @param RequestInterface $message
-     *
-     * @return bool
+     * @throws Exception
      */
-    public function isSignedWithDigest($message)
+    public function isSignedWithDigest(RequestInterface $message): bool
     {
         if ($this->isValidDigest($message)) {
             if ($this->isSigned($message)) {
@@ -157,11 +123,9 @@ class Verifier
     }
 
     /**
-     * @param RequestInterface $message
-     *
-     * @return bool
+     * @throws Exception
      */
-    public function isAuthorizedWithDigest($message)
+    public function isAuthorizedWithDigest(RequestInterface $message): bool
     {
         if ($this->isValidDigest($message)) {
             if ($this->isAuthorized($message)) {
@@ -172,12 +136,12 @@ class Verifier
         return false;
     }
 
-    public function keyStore()
+    public function keyStore(): KeyStoreInterface
     {
         return $this->keyStore;
     }
 
-    public function getStatus()
+    public function getStatus(): array
     {
         return $this->status;
     }

@@ -9,9 +9,11 @@ use PHPUnit\Framework\TestCase;
 
 class RsaContextTest extends TestCase
 {
-    private $context;
+    private Context $sha1context;
+    private Context $sha256context;
+    private Request $message;
 
-    public function setUp()
+    public function setUp(): void
     {
         $this->sha1context = new Context([
             'keys' => ['rsa1' => TestKeys::rsaPrivateKey],
@@ -87,8 +89,8 @@ class RsaContextTest extends TestCase
     public function testGetSigningString()
     {
         $this->assertEquals(
-          "(request-target): get /path?query=123\ndate: today",
-          $this->sha256context->signer()->getSigningString($this->message)
+            "(request-target): get /path?query=123\ndate: today",
+            $this->sha256context->signer()->getSigningString($this->message)
         );
     }
 
@@ -96,10 +98,10 @@ class RsaContextTest extends TestCase
     {
         $this->expectException(\HTTPSignatures\AlgorithmException::class);
         $sha224context = new Context([
-              'keys' => ['rsa1' => TestKeys::rsaPrivateKey],
-              'algorithm' => 'rsa-sha224',
-              'headers' => ['(request-target)', 'date'],
-          ]);
+            'keys' => ['rsa1' => TestKeys::rsaPrivateKey],
+            'algorithm' => 'rsa-sha224',
+            'headers' => ['(request-target)', 'date'],
+        ]);
     }
 
     public function testEmptyHeaders()
@@ -112,13 +114,13 @@ class RsaContextTest extends TestCase
 
         $signedMessage = $emptyHeadersContext->signer()->sign($this->message);
         $this->assertEquals(
-          'keyId="rsa1",algorithm="rsa-sha256",signature="Mutm6x0apXqU6aQh36l'.
-          '+/yEU0kSzKt8tEy6nxhBXJIv0kP+z9MWH0k7CgsLLt4RcGmf5i6qnmPkkKZ5ndLUL'.
-          'FnXpFIQjs2aWaQ4Twq29no/acrkJA1S9zFJEIy9uI+UJurzlpWe3pTBdyAvF0PnMC'.
-          '4IQJ0f7QRyWjMCSmHGKEv7iZGmt9l1l1zbx7DHeuaLCj1AIZlwhvw0bg+uk7NrgFG'.
-          '2Vix1w707O/u8K3IrHFDDpbNBI2YmqklyAuoPtVe+DFlaC/G80ew3VyNU9lqNAQxL'.
-          'eD0/O05xNNdJ7xjaaAPdv0VXYwzC70aek1ZY1RKlSmDi6x5k/clmtcWsqNx1RJw=="',
-          $signedMessage->getHeader('Signature')[0]
+            'keyId="rsa1",algorithm="rsa-sha256",signature="Mutm6x0apXqU6aQh36l'.
+            '+/yEU0kSzKt8tEy6nxhBXJIv0kP+z9MWH0k7CgsLLt4RcGmf5i6qnmPkkKZ5ndLUL'.
+            'FnXpFIQjs2aWaQ4Twq29no/acrkJA1S9zFJEIy9uI+UJurzlpWe3pTBdyAvF0PnMC'.
+            '4IQJ0f7QRyWjMCSmHGKEv7iZGmt9l1l1zbx7DHeuaLCj1AIZlwhvw0bg+uk7NrgFG'.
+            '2Vix1w707O/u8K3IrHFDDpbNBI2YmqklyAuoPtVe+DFlaC/G80ew3VyNU9lqNAQxL'.
+            'eD0/O05xNNdJ7xjaaAPdv0VXYwzC70aek1ZY1RKlSmDi6x5k/clmtcWsqNx1RJw=="',
+            $signedMessage->getHeader('Signature')[0]
         );
     }
 }

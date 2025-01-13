@@ -4,33 +4,21 @@ namespace HttpSignatures;
 
 class Context
 {
-    /** @var array */
-    private $headers;
-
-    /** @var KeyStoreInterface */
-    private $keyStore;
-
-    /** @var array */
-    private $keys;
-
-    /** @var string */
-    private $signingKeyId;
-
-    /** @var Algorithm */
-    public $algorithm;
+    private array $headers;
+    private KeyStoreInterface $keyStore;
+    private string $signingKeyId;
+    public ?AlgorithmInterface $algorithm = null;
 
     /**
-     * @param array $args
-     *
      * @throws Exception
      */
-    public function __construct($args)
+    public function __construct(array $args)
     {
-        if (isset($args['keys']) && isset($args['keyStore'])) {
+        if (isset($args['keys'], $args['keyStore'])) {
             throw new Exception(__CLASS__.' accepts keys or keyStore but not both');
         } elseif (isset($args['keys'])) {
             // array of keyId => keySecret
-            $this->keys = $args['keys'];
+            $this->setKeyStore(new KeyStore($args['keys']));
         } elseif (isset($args['keyStore'])) {
             $this->setKeyStore($args['keyStore']);
         }
@@ -53,34 +41,27 @@ class Context
     }
 
     /**
-     * @return Signer
-     *
      * @throws Exception
      */
-    public function signer()
+    public function signer(): Signer
     {
         return new Signer(
             $this->signingKey(),
             $this->algorithm(),
             $this->headerList()
-      );
+        );
     }
 
-    /**
-     * @return Verifier
-     */
-    public function verifier()
+    public function verifier(): Verifier
     {
         return new Verifier($this->keyStore());
     }
 
     /**
-     * @return Key
-     *
      * @throws Exception
      * @throws KeyStoreException
      */
-    private function signingKey()
+    private function signingKey(): Key
     {
         if (isset($this->signingKeyId)) {
             return $this->keyStore()->fetch($this->signingKeyId);
@@ -89,36 +70,26 @@ class Context
         }
     }
 
-    /**
-     * @return HeaderList
-     */
-    private function headerList()
+    private function headerList(): HeaderList
     {
-        if (!is_null($this->headers)) {
+        if (isset($this->headers)) {
             return new HeaderList($this->headers, true);
         } else {
             return new HeaderList(['date'], false);
         }
     }
 
-    /**
-     * @return KeyStore
-     */
-    private function keyStore()
+    private function keyStore(): KeyStoreInterface
     {
-        if (empty($this->keyStore)) {
-            $this->keyStore = new KeyStore($this->keys);
-        }
-
         return $this->keyStore;
     }
 
-    private function setKeyStore(KeyStoreInterface $keyStore)
+    private function setKeyStore(KeyStoreInterface $keyStore): void
     {
         $this->keyStore = $keyStore;
     }
 
-    private function algorithm()
+    private function algorithm(): ?AlgorithmInterface
     {
         return $this->algorithm;
     }

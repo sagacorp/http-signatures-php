@@ -2,35 +2,19 @@
 
 namespace HttpSignatures;
 
-class HmacAlgorithm implements AlgorithmInterface
+readonly class HmacAlgorithm implements AlgorithmInterface
 {
-    /** @var string */
-    private $digestName;
-
-    /**
-     * @param string $digestName
-     */
-    public function __construct($digestName)
+    public function __construct(private string $digestName)
     {
-        $this->digestName = $digestName;
     }
 
-    /**
-     * @return string
-     */
-    public function name()
+    public function name(): string
     {
         return sprintf('hmac-%s', $this->digestName);
     }
 
-    /**
-     * @param string $key
-     * @param string $data
-     *
-     * @return string
-     */
-    public function sign($secret, $data)
+    public function sign(string $key, string $data): string
     {
-        return hash_hmac($this->digestName, $data, $secret, true);
+        return hash_hmac($this->digestName, $data, $key, true);
     }
 }

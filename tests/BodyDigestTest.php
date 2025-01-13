@@ -9,9 +9,9 @@ use PHPUnit\Framework\TestCase;
 
 class BodyDigestTest extends TestCase
 {
-    private $context;
+    private BodyDigest $bodyDigest;
 
-    public function setUp()
+    public function setUp(): void
     {
         $this->bodyDigest = new BodyDigest();
     }
