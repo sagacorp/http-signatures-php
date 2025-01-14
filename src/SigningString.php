@@ -52,10 +52,10 @@ readonly class SigningString
 
         $header = '';
         $values = $this->message->getHeader($name);
-        while (sizeof($values) > 0) {
+        while (count($values) > 0) {
             $header = $header.$values[0];
             array_shift($values);
-            if (sizeof($values) > 0) {
+            if (count($values) > 0) {
                 $header = $header.', ';
             }
         }

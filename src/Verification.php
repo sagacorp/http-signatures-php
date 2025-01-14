@@ -18,17 +18,17 @@ class Verification
         // This will permit e.g. Authorization: Bearer to co-exist with Authorization: Signature
         switch (strtolower($header)) {
             case 'signature':
-                if (0 == sizeof($message->getHeader('Signature'))) {
+                if (0 == count($message->getHeader('Signature'))) {
                     throw new HeaderException("Cannot locate header 'Signature'");
-                } elseif (sizeof($message->getHeader('Signature')) > 1) {
+                } elseif (count($message->getHeader('Signature')) > 1) {
                     throw new HeaderException("Multiple headers named 'Signature'");
                 }
                 $signatureLine = $message->getHeader('Signature')[0];
                 break;
             case 'authorization':
-                if (0 == sizeof($message->getHeader('Authorization'))) {
+                if (0 == count($message->getHeader('Authorization'))) {
                     throw new HeaderException("Cannot locate header 'Authorization'");
-                } elseif (sizeof($message->getHeader('Authorization')) > 1) {
+                } elseif (count($message->getHeader('Authorization')) > 1) {
                     throw new HeaderException("Multiple headers named 'Authorization'");
                 }
                 $authorizationType = explode(' ', $message->getHeader('Authorization')[0])[0];
