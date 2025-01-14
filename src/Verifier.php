@@ -88,7 +88,7 @@ class Verifier
     {
         $this->status = [];
         if (0 == sizeof($message->getHeader('Digest'))) {
-            $this->status[] = 'Digest header mising';
+            $this->status[] = 'Digest header not found';
 
             return false;
         }
