@@ -1,6 +1,6 @@
 # CHANGELOG
 
-## Unreleased
+## 3.0.0
 
 - Support phpseclib 3 and 4 (`^3.0 || ^4.0.1`).
   - The two releases expose the same classes under different namespaces, so
