@@ -2,8 +2,8 @@
 
 namespace HttpSignatures;
 
-use phpseclib3\Crypt\PublicKeyLoader;
-use phpseclib3\Crypt\RSA;
+use HttpSignatures\Phpseclib\PublicKeyLoader;
+use HttpSignatures\Phpseclib\RSA;
 
 readonly class RsaAlgorithm implements AsymmetricAlgorithmInterface
 {

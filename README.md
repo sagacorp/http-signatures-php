@@ -1,6 +1,6 @@
 # Signing HTTP Messages PSR-7 Library
 
-[![Build Status](https://travis-ci.org/liamdennehy/http-signatures-php.svg?branch=master)](https://travis-ci.org/liamdennehy/http-signatures-php)
+[![CI](https://github.com/sagacorp/http-signatures-php/actions/workflows/ci.yml/badge.svg)](https://github.com/sagacorp/http-signatures-php/actions/workflows/ci.yml)
 [![Documentation Status](https://readthedocs.org/projects/http-signatures-php/badge/?version=latest)](https://http-signatures-php.readthedocs.io/en/latest/?badge=latest)
 
 PHP implementation of [Signing HTTP Messages][draft10] draft specification;

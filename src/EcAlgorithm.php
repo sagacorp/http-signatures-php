@@ -2,8 +2,8 @@
 
 namespace HttpSignatures;
 
-use phpseclib3\Crypt\EC;
-use phpseclib3\Crypt\PublicKeyLoader;
+use HttpSignatures\Phpseclib\EC;
+use HttpSignatures\Phpseclib\PublicKeyLoader;
 
 readonly class EcAlgorithm implements AsymmetricAlgorithmInterface
 {

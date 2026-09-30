@@ -2,10 +2,10 @@
 
 namespace HttpSignatures;
 
-use phpseclib3\Crypt\Common\AsymmetricKey;
-use phpseclib3\Crypt\Common\PrivateKey;
-use phpseclib3\Crypt\PublicKeyLoader;
-use phpseclib3\File\X509;
+use HttpSignatures\Phpseclib\AsymmetricKey;
+use HttpSignatures\Phpseclib\PrivateKey;
+use HttpSignatures\Phpseclib\PublicKeyLoader;
+use HttpSignatures\Phpseclib\X509;
 
 class Key
 {
@@ -43,7 +43,7 @@ class Key
 
             if (empty($pkiKey)) {
                 if (0 != strpos($key, 'BEGIN')) {
-                    throw new KeyException('Input looks like PEM but key not understood using phpseclib3', 1);
+                    throw new KeyException('Input looks like PEM but key not understood using phpseclib', 1);
                 } elseif (!empty($publicKeys) || !empty($privateKsy)) {
                     throw new KeyException('PKI Key(s) and Secret provided, only one type of key supported', 1);
                 } else {
@@ -189,8 +189,14 @@ class Key
     public static function isX509Certificate(array|string $candidate): bool
     {
         try {
-            $x509 = new X509();
-            $x509->loadX509($candidate);
+            if (method_exists(X509::class, 'load')) {
+                // phpseclib 4
+                $x509 = X509::load($candidate);
+            } else {
+                // phpseclib 3
+                $x509 = new X509();
+                $x509->loadX509($candidate);
+            }
             $key = $x509->getPublicKey();
 
             return (bool) $key;

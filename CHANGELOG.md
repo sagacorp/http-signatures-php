@@ -1,5 +1,19 @@
 # CHANGELOG
 
+## Unreleased
+
+- Support phpseclib 3 and 4 (`^3.0 || ^4.0.1`).
+  - The two releases expose the same classes under different namespaces, so
+    `src/Phpseclib/bootstrap.php` aliases whichever one is installed into
+    `HttpSignatures\Phpseclib`.
+  - `X509` certificate loading branches on the phpseclib version.
+- Widen development dependencies so they resolve against the running PHP
+  version: PHPUnit `^11.5 || ^12.0 || ^13.0`, guzzlehttp/psr7 `^2.7 || ^3.0`,
+  symfony/http-foundation and symfony/psr-http-message-bridge `^7.2 || ^8.0`.
+  PHPUnit 13 and Symfony 8 require PHP 8.4, which the library itself does not.
+- Replace the Travis configuration with a GitHub Actions matrix covering
+  PHP 8.3/8.4/8.5 against lowest and highest dependencies.
+
 ## 11.0.0-beta1
 
 - Move phpseclib from git ref to "stable" liamdennehy/phpseclib.

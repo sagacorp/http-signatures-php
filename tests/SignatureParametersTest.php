@@ -6,6 +6,7 @@ use HttpSignatures\HeaderList;
 use HttpSignatures\HmacAlgorithm;
 use HttpSignatures\Key;
 use HttpSignatures\RsaAlgorithm;
+use HttpSignatures\Signature;
 use HttpSignatures\SignatureParameters;
 use PHPUnit\Framework\TestCase;
 
@@ -17,12 +18,8 @@ class SignatureParametersTest extends TestCase
         $algorithm = new HmacAlgorithm('sha256');
         $headerList = new HeaderList(['(request-target)', 'date']);
 
-        $signature = $this->getMockBuilder('HttpSignatures\Signature')
-            ->disableOriginalConstructor()
-            ->getMock();
-
+        $signature = $this->createStub(Signature::class);
         $signature
-            ->expects($this->any())
             ->method('string')
             ->willReturn('thesignature');
 
@@ -40,12 +37,8 @@ class SignatureParametersTest extends TestCase
         $algorithm = new RsaAlgorithm('sha256');
         $headerList = new HeaderList(['(request-target)', 'date']);
 
-        $signature = $this->getMockBuilder('HttpSignatures\Signature')
-            ->disableOriginalConstructor()
-            ->getMock();
-
+        $signature = $this->createStub(Signature::class);
         $signature
-            ->expects($this->any())
             ->method('string')
             ->willReturn('thesignature');
 

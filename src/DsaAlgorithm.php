@@ -2,8 +2,8 @@
 
 namespace HttpSignatures;
 
-use phpseclib3\Crypt\DSA;
-use phpseclib3\Crypt\PublicKeyLoader;
+use HttpSignatures\Phpseclib\DSA;
+use HttpSignatures\Phpseclib\PublicKeyLoader;
 
 readonly class DsaAlgorithm implements AsymmetricAlgorithmInterface
 {
