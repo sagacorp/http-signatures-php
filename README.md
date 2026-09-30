@@ -20,17 +20,19 @@ allowing cryptographic signing and verifying of [PSR-7 messages][psr7].
 Complete documentation for this library can be found at
 [Read The Docs](https://http-signatures-php.readthedocs.io/en/latest/)
 
-**WARNING:** Version 11 of this library incorporates
-[phpseclib](http://phpseclib.sourceforge.net/)'s ongoing work on their
-[version 3.0 implementation](https://github.com/phpseclib/phpseclib/tree/3.0).
-If there are any problems please log an issue, but as the library has not been
-stabilised or completely reviewed you are advised to proceed with caution,
-or remain at v10 of this library until phpseclib 3.0 is complete and the
-MAJOR version of this library is bumped.
+## Requirements
+
+- PHP 8.3 or later
+- [phpseclib](https://phpseclib.com/) 3 or 4, for all cryptographic operations
+
+Both phpseclib major versions are supported; Composer will resolve whichever
+one suits the rest of your project. They expose the same classes under
+different namespaces, so the library aliases the installed one internally and
+its own public API is identical either way.
 
 ## Simple Usage
 
-Add [liamdennehy/http-signatures-php][package] to your [``composer.json``][composer].
+Add [sagacorp/http-signatures-php][package] to your [``composer.json``][composer].
 
 * A message is assumed to be a PSR-7 compatible Request or Response.
 * A ``Context`` object is used to configure the signature parameters, and prepare
@@ -73,8 +75,8 @@ or by manually removing the incompatible dependencies using the command
 [draft10]: http://tools.ietf.org/html/draft-cavage-http-signatures-10
 [Symfony\Component\HttpFoundation\Request]: https://github.com/symfony/HttpFoundation/blob/master/Request.php
 [composer]: https://getcomposer.org/
-[package]: https://packagist.org/packages/liamdennehy/http-signatures-php
-[github-issues]: https://github.com/liamdennehy/http-signatures-php/issues
+[package]: https://packagist.org/packages/sagacorp/http-signatures-php
+[github-issues]: https://github.com/sagacorp/http-signatures-php/issues
 [psr7]: http://www.php-fig.org/psr/psr-7/
 
 ## License

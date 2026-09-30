@@ -20,7 +20,7 @@ installed when simply included in a library.
 The command ``composer`` is presumed to be included in your path.
 
 ```sh
-git clone https://github.com/liamdennehy/http-signatures-php.git
+git clone https://github.com/sagacorp/http-signatures-php.git
 cd http-signatures-php
 git checkout -b reference 6a885809a59dbd70ef596b63423b0427266fc2d3
 composer update

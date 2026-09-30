@@ -33,8 +33,8 @@ allowing cryptographic signing and verifying of
 Usage
 ============
 
-Add `liamdennehy/http-signatures-php
-<https://packagist.org/packages/liamdennehy/http-signatures-php>`_
+Add `sagacorp/http-signatures-php
+<https://packagist.org/packages/sagacorp/http-signatures-php>`_
 to your ``composer.json``. Full instructions can be found in :ref:`installation`
 
 To quickly see how a message is signed, take a look in :ref:`signing_quickstart`
@@ -43,7 +43,8 @@ in the Quickstart guide.
 Requirements
 ============
 
-#. PHP 5.6 (PHP >7.0 recommended)
+#. PHP 8.3 or later
+#. phpseclib 3 or 4, for all cryptographic operations
 #. Composer for full autoloading of class loading
 #. Understanding of PSR-7 HTTP message handling
 
@@ -66,7 +67,7 @@ You can add http-signatures-php as a dependency using the ``composer.phar`` CLI:
 
 .. code-block:: sh
 
-  php composer.phar require liamdennehy/http-signatures-php
+  php composer.phar require sagacorp/http-signatures-php
 
 Alternatively, you can specify http-signatures-php as a dependency
 in your project's existing ``composer.json`` file:
@@ -75,7 +76,7 @@ in your project's existing ``composer.json`` file:
 
   {
     "require": {
-       "liamdennehy/http-signatures-php": "~6.0"
+       "sagacorp/http-signatures-php": "^3.0"
     }
   }
   
@@ -94,14 +95,14 @@ Contributing
 ============
 
 Pull Requests are welcome, as are
-`issue reports <https://github.com/liamdennehy/http-signatures-php/issues>`_
+`issue reports <https://github.com/sagacorp/http-signatures-php/issues>`_
 if you encounter any problems.
 
 ..
     - [draft10]: http://tools.ietf.org/html/draft-cavage-http-signatures-10
     - [Symfony\Component\HttpFoundation\Request]: https://github.com/symfony/HttpFoundation/blob/master/Request.php
     - [composer]: https://getcomposer.org/
-    - [package]: https://packagist.org/packages/liamdennehy/http-signatures-php
+    - [package]: https://packagist.org/packages/sagacorp/http-signatures-php
     - [psr7]: http://www.php-fig.org/psr/psr-7/
     
 License
