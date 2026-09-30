@@ -25,8 +25,7 @@ class KeyStore implements KeyStoreInterface
     {
         if (isset($this->keys[$keyId])) {
             return $this->keys[$keyId];
-        } else {
-            throw new KeyStoreException("Key '$keyId' not found");
         }
+        throw new KeyStoreException("Key '$keyId' not found");
     }
 }

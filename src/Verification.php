@@ -63,9 +63,8 @@ class Verification
                         $this->providedSignature()
                     )) {
                         return true;
-                    } else {
-                        throw new SignatureException('Invalid signature', 1);
                     }
+                    throw new SignatureException('Invalid signature', 1);
                     break;
                 case 'asymmetric':
                     $signedString = new SigningString(
@@ -159,9 +158,8 @@ class Verification
         if (!isset($this->parameters[$name])) {
             if ('headers' == $name) {
                 return 'date';
-            } else {
-                throw new Exception("Signature parameters does not contain '$name'");
             }
+            throw new Exception("Signature parameters does not contain '$name'");
         }
 
         return $this->parameters[$name];

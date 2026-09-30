@@ -12,7 +12,10 @@
   symfony/http-foundation and symfony/psr-http-message-bridge `^7.2 || ^8.0`.
   PHPUnit 13 and Symfony 8 require PHP 8.4, which the library itself does not.
 - Replace the Travis configuration with a GitHub Actions matrix covering
-  PHP 8.3/8.4/8.5 against lowest and highest dependencies.
+  PHP 8.3/8.4/8.5 against lowest and highest dependencies, plus a php-cs-fixer
+  job.
+- Apply the outstanding php-cs-fixer fixes (`no_useless_else`,
+  `statement_indentation`, whitespace); no behaviour changes.
 
 ## 11.0.0-beta1
 

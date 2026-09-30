@@ -65,18 +65,17 @@ class Context
     {
         if (isset($this->signingKeyId)) {
             return $this->keyStore()->fetch($this->signingKeyId);
-        } else {
-            throw new Exception('no implicit or specified signing key');
         }
+        throw new Exception('no implicit or specified signing key');
     }
 
     private function headerList(): HeaderList
     {
         if (isset($this->headers)) {
             return new HeaderList($this->headers, true);
-        } else {
-            return new HeaderList(['date'], false);
         }
+
+        return new HeaderList(['date'], false);
     }
 
     private function keyStore(): KeyStoreInterface

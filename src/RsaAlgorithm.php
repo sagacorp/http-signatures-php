@@ -40,10 +40,10 @@ readonly class RsaAlgorithm implements AsymmetricAlgorithmInterface
             if ('Invalid signature' != $e->getMessage()) {
                 // Unhandled error state
                 throw $e;
-            } else {
-                // Tolerate malformed signature
-                return false;
             }
+
+            // Tolerate malformed signature
+            return false;
         }
     }
 }

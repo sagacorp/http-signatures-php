@@ -46,9 +46,8 @@ class Key
                     throw new KeyException('Input looks like PEM but key not understood using phpseclib', 1);
                 } elseif (!empty($publicKeys) || !empty($privateKsy)) {
                     throw new KeyException('PKI Key(s) and Secret provided, only one type of key supported', 1);
-                } else {
-                    $secrets[hash('sha256', $key)] = $key;
                 }
+                $secrets[hash('sha256', $key)] = $key;
             } else {
                 $type = explode('\\', get_class($pkiKey))[3];
                 switch ($type) {
@@ -69,9 +68,9 @@ class Key
                             throw new KeyException('Public Key and Secret provided, only one type of verifying key supported', 1);
                         } elseif (!empty($privateKey) && !array_key_exists($fingerPrint, $publicKeys)) {
                             throw new KeyException("Public Key and Private Key don't seem to be related", 1);
-                        } else {
-                            $publicKeys[$fingerPrint] = $pkiKey;
                         }
+                        $publicKeys[$fingerPrint] = $pkiKey;
+
                         break;
 
                     default:
@@ -128,19 +127,19 @@ class Key
             case 'asymmetric':
                 if (1 != count($this->publicKeys)) {
                     throw new KeyException('More than one Verifying Key. Use getVerifyingKeys() instead', 1);
-                // TODO: Implement getVerifyingKeys and multiple key verification
-                // https://github.com/liamdennehy/http-signatures-php/issues/20
-                } else {
-                    return str_replace("\r\n", "\n", current($this->publicKeys)->toString($format));
+                    // TODO: Implement getVerifyingKeys and multiple key verification
+                    // https://github.com/liamdennehy/http-signatures-php/issues/20
                 }
-                // no break
+
+                return str_replace("\r\n", "\n", current($this->publicKeys)->toString($format));
+
             case 'secret':
                 if (1 != count($this->secrets)) {
                     throw new KeyException('More than one Secret Key. Use getVerifyingKeys() instead', 1);
-                } else {
-                    return current($this->secrets);
                 }
-                // no break
+
+                return current($this->secrets);
+
             default:
                 throw new KeyException("Unknown key class $this->class");
         }
